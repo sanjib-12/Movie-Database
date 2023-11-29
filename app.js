@@ -6,8 +6,7 @@ const movies =JSON.parse(fs.readFileSync('./data/movies.json'));
 
 app.use(express.json());
 
-//GET api
-app.get('/api/v1/movies',(req,res) =>{
+const getAllMovies = (req,res) =>{
     res.status(200).json({
         status:"success",
         count:movies.length,
@@ -15,10 +14,9 @@ app.get('/api/v1/movies',(req,res) =>{
             movies:movies
         }
     }) ;
-});
+}
 
-//Route parameter api
-app.get('/api/v1/movies/:id?/:name?',(req,res) =>{
+const routParamId = (req,res) =>{
     console.log(req.params.id);
     const id = req.params.id * 1; // here this will make the id to integer
     const result = movies.filter((word) =>{
@@ -38,10 +36,9 @@ app.get('/api/v1/movies/:id?/:name?',(req,res) =>{
             movies:result
         }
     }) ;
-});
- 
-//POST api
-app.post('/api/v1/movies',(req,res) =>{
+}
+
+const addMovies = (req,res) =>{
     //console.log(req.body);
     const newId = movies[movies.length-1].id+1;
 
@@ -58,10 +55,9 @@ app.post('/api/v1/movies',(req,res) =>{
         })
     });
    // res.send('created');
-});
+}
 
-//Patch method
-app.patch('/api/v1/movies/:id?',(req, res) => {
+const updateMovies = (req, res) => {
     let id = req.params.id* 1;
     console.log('id' + id)
     let movieToUpdate =  movies.find(el => el.id === id);
@@ -83,11 +79,9 @@ app.patch('/api/v1/movies/:id?',(req, res) => {
             }
         })
     })
-});
+}
 
-
-//Deleting api
-app.delete('/api/v1/movies/:id?',(req, res)=>{
+const deleteMovies = (req, res)=>{
     const id = req.params.id * 1;
     const movieToDelete = movies.find(el => el.id === id);
 
@@ -108,7 +102,24 @@ app.delete('/api/v1/movies/:id?',(req, res)=>{
             }
         })
     })
-})
+}
+
+//GET api all
+app.get('/api/v1/movies',getAllMovies);
+
+//Route parameter api
+app.get('/api/v1/movies/:id?/:name?',routParamId);
+ 
+//POST api
+app.post('/api/v1/movies',addMovies);
+
+//Patch method
+app.patch('/api/v1/movies/:id?',updateMovies);
+
+//Deleting api
+app.delete('/api/v1/movies/:id?',deleteMovies);
+
+
 //CREATE A SERVER
 app.listen(3000,() =>{
     console.log('Server has started...');
