@@ -105,19 +105,25 @@ const deleteMovies = (req, res)=>{
 }
 
 //GET api all
-app.get('/api/v1/movies',getAllMovies);
+//app.get('/api/v1/movies',getAllMovies);
 
 //Route parameter api
-app.get('/api/v1/movies/:id?/:name?',routParamId);
+app.get('/api/v1/movies/:id/:name?',routParamId);
  
 //POST api
-app.post('/api/v1/movies',addMovies);
+//app.post('/api/v1/movies',addMovies);
 
 //Patch method
 app.patch('/api/v1/movies/:id?',updateMovies);
 
 //Deleting api
 app.delete('/api/v1/movies/:id?',deleteMovies);
+
+
+// the below 'app.route' works as same sa above just it  arrange it nicely.
+app.route('/api/v1/movies')
+    .get(getAllMovies)
+    .post(addMovies)
 
 
 //CREATE A SERVER
