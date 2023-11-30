@@ -1,8 +1,1 @@
-[
-  { "id": 1, "name": "die Hard", "releaseYear": 2001, "duration": 901 },
-  { "id": 4, "name": "die Hard4", "releaseYear": 2004, "duration": 904 },
-  { "id": 6, "name": "test", "release": 2012, "duration": 90 },
-  { "id": 7, "name": "test", "release": 2012, "duration": 90 },
-  { "id": 8, "name": "test", "release": 2012, "duration": 90 },
-  { "id": 9, "name": "test", "release": 2012, "duration": 90 }
-]
+[{"id":1,"name":"die Hard","releaseYear":2001,"duration":901},{"id":4,"name":"die Hard4","releaseYear":2004,"duration":904},{"id":6,"name":"test","release":2012,"duration":90},{"id":7,"name":"test","release":2012,"duration":90},{"id":8,"name":"test","release":2012,"duration":90},{"id":9,"name":"test","release":2012,"duration":90},{"id":10,"name":"middleware","release":2012,"duration":90}]
