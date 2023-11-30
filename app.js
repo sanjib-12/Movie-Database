@@ -1,19 +1,28 @@
 const fs = require('fs')
 const express = require('express');// this will return a function
+const morgan = require('morgan');// this is a third party middleware which is used to log the data status
 
 let app = express(); // This will return an objects
 const movies =JSON.parse(fs.readFileSync('./data/movies.json'));
 
 app.use(express.json());
+app.use(morgan('dev'));
+app.use((req, res, next) => {
+    console.log("middleware")
+    next();
+});
 
 const getAllMovies = (req,res) =>{
+       
     res.status(200).json({
         status:"success",
         count:movies.length,
         data: {
             movies:movies
         }
+       
     }) ;
+    console.log("main api") 
 }
 
 const routParamId = (req,res) =>{
@@ -108,24 +117,28 @@ const deleteMovies = (req, res)=>{
 //app.get('/api/v1/movies',getAllMovies);
 
 //Route parameter api
-app.get('/api/v1/movies/:id/:name?',routParamId);
+//app.get('/api/v1/movies/:id/:name?',routParamId);
  
 //POST api
 //app.post('/api/v1/movies',addMovies);
 
 //Patch method
-app.patch('/api/v1/movies/:id?',updateMovies);
+//app.patch('/api/v1/movies/:id?',updateMovies);
 
 //Deleting api
-app.delete('/api/v1/movies/:id?',deleteMovies);
+//app.delete('/api/v1/movies/:id?',deleteMovies);
 
-
-// the below 'app.route' works as same sa above just it  arrange it nicely.
-app.route('/api/v1/movies')
+const moviesRouter = express.Router();
+moviesRouter.route('/')
     .get(getAllMovies)
     .post(addMovies)
 
+moviesRouter.route('/:id')
+    .get(routParamId)
+    .patch(updateMovies)
+    .delete(deleteMovies)
 
+app.use('/api/v1/movies', moviesRouter);
 //CREATE A SERVER
 app.listen(3000,() =>{
     console.log('Server has started...');
