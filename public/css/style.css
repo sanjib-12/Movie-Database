@@ -1,0 +1,10 @@
+h2{
+    color: grey;
+    font-size: 'Lucida Sans';
+}
+
+div.card{
+    text-align: center;
+    border-radius: 5px;
+    margin: 50px 100px;
+}

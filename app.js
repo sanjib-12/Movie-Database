@@ -9,7 +9,7 @@ let app = express(); // This will return an objects
 
 app.use(express.json());
 app.use(morgan('dev'));
-
+app.use(express.static('./public/'))
 
 app.use('/api/v1/movies', moviesRouter);
 
