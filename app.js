@@ -9,10 +9,7 @@ let app = express(); // This will return an objects
 
 app.use(express.json());
 app.use(morgan('dev'));
-app.use((req, res, next) => {
-    console.log("middleware")
-    next();
-});
+
 
 app.use('/api/v1/movies', moviesRouter);
 
