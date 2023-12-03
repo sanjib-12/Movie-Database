@@ -1,11 +1,44 @@
 const Movie = require("./../Models/movieModel")
 
 
-exports.getAllMovies = (req,res) =>{
+exports.getAllMovies = async (req,res) =>{
+    try{
+        const movies = await Movie.find();
+        res.status(200).json({
+            stauts: 'success',
+            length: movies.length,
+            data: {
+                movies: movies
+            }
+
+        })
+    }catch(err){
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+    }
 
 }
 
-exports.getMovie = (req,res) =>{
+exports.getMovie = async (req,res) =>{
+    try{
+        //const movie = await Movie.find({_id: req.params.id});
+        const movie = await Movie.findById(req.params.id);
+        res.status(200).json({
+            stauts: 'success',
+        
+            data: {
+                movie: movie
+            }
+
+        })
+    }catch(err){
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+    }
 
 }
 
