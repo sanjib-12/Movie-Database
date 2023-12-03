@@ -14,25 +14,6 @@ mongoose.connect(process.env.CONN_STR)
     console.log('error in connection.')
 })
 
-const movieSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        requried: [true,'Name is required field!'],
-        unique: true
-    },
-    description: String,
-    duration: {
-        type: Number,
-        required: [true,'duration is required field!']
-    },
-    ratings: {
-        type: Number,
-        default: 0.0
-    },
-});
-
-//const movie = mongoose.model('movie','movieSchema');
-
 const port = process.env.PORT || 3000;
 
 app.listen(port,() =>{
