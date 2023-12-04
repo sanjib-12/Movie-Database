@@ -3,7 +3,9 @@ const Movie = require("./../Models/movieModel")
 
 exports.getAllMovies = async (req,res) =>{
     try{
-        const movies = await Movie.find();
+        console.log(req.query.duration, req.query.rating*1);
+        const movies = await Movie.find({ duration: {$gte: req.query.duration *1}, ratings: { $gte: req.query.rating *1 } });
+        //const movies = await Movie.find();
         res.status(200).json({
             stauts: 'success',
             length: movies.length,
