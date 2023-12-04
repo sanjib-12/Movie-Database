@@ -1,10 +1,23 @@
+//const { param } = require('../Routes/moviesRoutes');
 const Movie = require("./../Models/movieModel")
 
 
 exports.getAllMovies = async (req,res) =>{
+   
     try{
-        console.log(req.query.duration, req.query.rating*1);
-        const movies = await Movie.find({ duration: {$gte: req.query.duration *1}, ratings: { $gte: req.query.rating *1 } });
+        //console.log(req.query.duration, req.query.rating*1);
+        console.log(req.query)
+        const excludeFiels = ['sort', 'page', 'limit', 'fields'];
+        
+        const queryObj = {...req.query};
+        
+        excludeFiels.forEach(el =>{
+            delete queryObj[el];
+        })
+        console.log(queryObj);
+        
+        const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
+
         //const movies = await Movie.find();
         res.status(200).json({
             stauts: 'success',
