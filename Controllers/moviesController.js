@@ -6,7 +6,7 @@ exports.getAllMovies = async (req,res) =>{
    
     try{
         //console.log(req.query.duration, req.query.rating*1);
-        console.log(req.query)
+        /*console.log(req.query)
         const excludeFiels = ['sort', 'page', 'limit', 'fields'];
         
         const queryObj = {...req.query};
@@ -17,8 +17,19 @@ exports.getAllMovies = async (req,res) =>{
         console.log(queryObj);
         
         const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
+         */
 
-        //const movies = await Movie.find();
+
+
+        //imput in postma = localhost:3000/api/v1/movies/?duration[gte]=90&ratings[gte]=5&price[lt]=50
+        console.log(req.query);
+        let queryStr = JSON.stringify(req.query);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
+        console.log(queryStr);
+        const queryObj = JSON.parse(queryStr);
+        console.log(queryObj);
+        const movies = await Movie.find(queryObj);
+        //const movies = await Movie.find(req.query);
         res.status(200).json({
             stauts: 'success',
             length: movies.length,
