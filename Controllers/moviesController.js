@@ -20,63 +20,22 @@ exports.getAllMovies = async (req,res) =>{
         const features = new Apifeatures(Movie.find(), req.query).filter().sort().limitFields().paginate();
         const movies = await features.query;
     /*    
-        //console.log(req.query.duration, req.query.rating*1);
-        // console.log(req.query)
-        // const excludeFiels = ['sort', 'page', 'limit', 'fields'];
+        console.log(req.query.duration, req.query.rating*1);
+        console.log(req.query)
+        const excludeFiels = ['sort', 'page', 'limit', 'fields'];
         
-        // const queryObj = {...req.query};
+        const queryObj = {...req.query};
         
-        // excludeFiels.forEach(el =>{
-        //     delete queryObj[el];
-        // })
-        // console.log(queryObj);
-        
-        // const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
-         
-        //const movies = await Movie.find(req.query);
-
-       
-        
-        
-        let queryStr = JSON.stringify(req.query);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
-        const queryObj = JSON.parse(queryStr);
+        excludeFiels.forEach(el =>{
+            delete queryObj[el];
+        })
         console.log(queryObj);
         
-        let query =  Movie.find();
-        
-        //sorting logic
-        if(req.query.sort){
-            const sortby = req.query.sort.split(',').join(" ");
-            console.log(sortby);
-            query = query.sort(sortby);
-        
-        }else{
-            query = query.sort('name');
-        }
-        //Limiting fields
-        if(req.query.fields){
-            const sortby = req.query.fields.split(',').join(" ");
-            console.log(sortby)
-            query.select( sortby )
-        }else{
-            query = query.select('-__v');
-        }
+        const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
+         
+        const movies = await Movie.find(req.query);
 
-        //Pagination
-        const page = req.query.page || 1;
-        const limit = req.query.limit || 10;
-        const skip = (page-1)* limit;
-        query = query.skip(skip).limit(limit);
-
-        if(req.query.page){
-            const moviesCount = await Movie.countDocuments();
-            if(skip >= moviesCount){
-                throw new Error("This page in not found!");
-            }
-        }
     
-        const movies = await query;
     */    
         
         res.status(200).json({
@@ -174,3 +133,69 @@ exports.deleteMovies = async (req, res)=>{
     }
 }
 
+exports.getMovieStats = async (req, res) =>{
+    try{
+        const stats = await Movie.aggregate([
+            {$match: {ratings:{$gte:4}}},
+            {$group :{
+                _id: '$releaseYear',
+                avgRarting:{$avg: '$ratings'},
+                avgPrice: { $avg: '$price' },
+                minPrice: { $min: '$price'},
+                maxPrice: { $max: '$price'},
+                priceTotal: { $sum: '$price'},
+                movieCount: { $sum: 1}
+            }},
+            {$sort: {minPrice: 1}}
+        ]);
+
+        res.status(200).json({
+            stauts: 'success',
+            length: stats.length,
+            data: {
+               stats
+            }
+        })
+
+    }catch(err){
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
+}
+
+exports.getMovieByGenre = async (req,res) =>{
+    try{
+        const genre = req.params.genre;
+        console.log(genre)
+        const movie = await Movie.aggregate([
+            {$unwind: '$genres'},
+            {$group: {
+                _id:'$genres',
+                movieCount: {$sum: 1},
+                movies:{$push:'$name'}
+            }},
+            {$addFields : {genre: "$_id"}},
+            {$project: {_id: 0}},
+            {$sort: {movieCount : -1}},
+            {$match:{genre: genre}}
+            
+
+        ]);
+
+        res.status(200).json({
+            stauts: 'success',
+            length: movie.length,
+            data: {
+               movie
+            }
+        })
+
+    }catch(err){
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
+}
