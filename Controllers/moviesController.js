@@ -1,4 +1,5 @@
 //const { param } = require('../Routes/moviesRoutes');
+const { query } = require("express");
 const Movie = require("./../Models/movieModel")
 
 
@@ -18,8 +19,7 @@ exports.getAllMovies = async (req,res) =>{
         
         const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
          */
-
-
+        //const movies = await Movie.find(req.query);
 
         //imput in postma = localhost:3000/api/v1/movies/?duration[gte]=90&ratings[gte]=5&price[lt]=50
         console.log(req.query);
@@ -28,8 +28,24 @@ exports.getAllMovies = async (req,res) =>{
         console.log(queryStr);
         const queryObj = JSON.parse(queryStr);
         console.log(queryObj);
-        const movies = await Movie.find(queryObj);
-        //const movies = await Movie.find(req.query);
+        console.log(req.query.sort);
+        // let movies = await Movie.find();
+        // movies = movies.sort(req.query.sort)
+        //console.log(movies);
+        let query =  Movie.find();
+        //console.log(query);
+        if(req.query.sort){
+            const sortby = req.query.sort.split(',').join(" ");
+            console.log(sortby);
+            query = query.sort(sortby);
+        
+        }else{
+            query = query.sort('name');
+        }
+        
+        const movies = await query;
+        
+        
         res.status(200).json({
             stauts: 'success',
             length: movies.length,
