@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const fs = require('fs');
 const movieSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -53,7 +53,9 @@ const movieSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: [true, 'Price is a requred field!']
-    }
+    },
+    createdBy: String
+    
 },{
     toJSON:{virtuals: true},
     toObject: {virtuals: true}
@@ -61,6 +63,18 @@ const movieSchema = new mongoose.Schema({
 
 movieSchema.virtual('durationInHour').get(function(){
     return (this.duration/60).toFixed(2);
+})
+
+movieSchema.pre('save', function(next){
+    this.createdBy="user1234";
+    next();
+})
+movieSchema.post('save', function(doc, next){
+    const content = `A new movie document with name ${doc.name} has been created by ${doc.createdBy}\n`;
+    fs.writeFileSync('./Log/log.txt',content, {flag: 'a'}, (err)=>{
+        console.log(err.message)
+    })
+    next();
 })
 
 const Movie = mongoose.model('Movie',movieSchema);
