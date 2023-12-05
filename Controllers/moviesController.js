@@ -2,6 +2,15 @@
 const { query } = require("express");
 const Movie = require("./../Models/movieModel")
 
+exports.getHighestRated = (req, res, next) =>{
+    req.query.limit = '5';
+    req.query.sort = '-ratings';
+
+    next();
+}
+
+
+
 
 exports.getAllMovies = async (req,res) =>{
    
