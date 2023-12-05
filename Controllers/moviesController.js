@@ -1,6 +1,7 @@
 //const { param } = require('../Routes/moviesRoutes');
-const { query } = require("express");
+//const { query } = require("express");
 const Movie = require("./../Models/movieModel")
+const Apifeatures = require('./../Utils/ApiFeatures');
 
 exports.getHighestRated = (req, res, next) =>{
     req.query.limit = '5';
@@ -15,19 +16,23 @@ exports.getHighestRated = (req, res, next) =>{
 exports.getAllMovies = async (req,res) =>{
    
     try{
+        console.log("params" + req.query)
+        const features = new Apifeatures(Movie.find(), req.query).filter().sort().limitFields().paginate();
+        const movies = await features.query;
+    /*    
         //console.log(req.query.duration, req.query.rating*1);
-        /*console.log(req.query)
-        const excludeFiels = ['sort', 'page', 'limit', 'fields'];
+        // console.log(req.query)
+        // const excludeFiels = ['sort', 'page', 'limit', 'fields'];
         
-        const queryObj = {...req.query};
+        // const queryObj = {...req.query};
         
-        excludeFiels.forEach(el =>{
-            delete queryObj[el];
-        })
-        console.log(queryObj);
+        // excludeFiels.forEach(el =>{
+        //     delete queryObj[el];
+        // })
+        // console.log(queryObj);
         
-        const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
-         */
+        // const movies = await Movie.find({ duration: {$gte: queryObj.duration *1}, ratings: { $gte: queryObj.rating *1 } });
+         
         //const movies = await Movie.find(req.query);
 
        
@@ -70,9 +75,9 @@ exports.getAllMovies = async (req,res) =>{
                 throw new Error("This page in not found!");
             }
         }
-
+    
         const movies = await query;
-        
+    */    
         
         res.status(200).json({
             stauts: 'success',
