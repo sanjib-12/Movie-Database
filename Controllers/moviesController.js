@@ -21,19 +21,17 @@ exports.getAllMovies = async (req,res) =>{
          */
         //const movies = await Movie.find(req.query);
 
-        //imput in postma = localhost:3000/api/v1/movies/?duration[gte]=90&ratings[gte]=5&price[lt]=50
-        console.log(req.query);
+       
+        
+        
         let queryStr = JSON.stringify(req.query);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
-        console.log(queryStr);
         const queryObj = JSON.parse(queryStr);
         console.log(queryObj);
-        console.log(req.query.sort);
-        // let movies = await Movie.find();
-        // movies = movies.sort(req.query.sort)
-        //console.log(movies);
+        
         let query =  Movie.find();
-        //console.log(query);
+        
+        //sorting logic
         if(req.query.sort){
             const sortby = req.query.sort.split(',').join(" ");
             console.log(sortby);
@@ -42,7 +40,15 @@ exports.getAllMovies = async (req,res) =>{
         }else{
             query = query.sort('name');
         }
-        
+        //Limiting fields
+        if(req.query.fields){
+            const sortby = req.query.fields.split(',').join(" ");
+            console.log(sortby)
+            query.select( sortby )
+        }else{
+            query = query.select('-__v');
+        }
+
         const movies = await query;
         
         
