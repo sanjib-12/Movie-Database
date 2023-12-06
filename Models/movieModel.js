@@ -65,6 +65,7 @@ movieSchema.virtual('durationInHour').get(function(){
     return (this.duration/60).toFixed(2);
 })
 
+//Below are the pre and post middleware for the document 
 movieSchema.pre('save', function(next){
     this.createdBy="user1234";
     next();
@@ -76,6 +77,26 @@ movieSchema.post('save', function(doc, next){
     })
     next();
 })
+
+//Below are the query middleware
+//The regular expression /^find/ matches strings that start with the word "find"
+movieSchema.pre(/^find/,function(next){
+    this.find({releaseDate: {$lte: Date.now()}});
+    this.startTime = Date.now() 
+    next();
+})
+
+movieSchema.post(/^find/,function(docs,next){
+    this.find({releaseDate: {$lte: Date.now()}})   
+    this.endTime = Date.now();
+
+    const content = `Quert took ${this.endTime - this.startTime} milliseconds to fetch the documnets\n`;
+    fs.writeFileSync('./Log/log.txt',content, {flag: 'a'}, (err)=>{
+        console.log(err.message)
+    })
+    next();
+})
+
 
 const Movie = mongoose.model('Movie',movieSchema);
 
