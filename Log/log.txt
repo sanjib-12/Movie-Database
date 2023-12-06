@@ -2,3 +2,4 @@ A new movie document with name Neon Requiem has been created by user1234
 Quert took NaN milliseconds to fetch the documnets
 Quert took NaN milliseconds to fetch the documnets
 Quert took 80 milliseconds to fetch the documnets
+Quert took 85 milliseconds to fetch the documnets

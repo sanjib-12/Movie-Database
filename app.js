@@ -15,15 +15,29 @@ if(process.env.NODE_ENV === 'development'){
 app.use(express.static('./public/'))
 
 app.use('/api/v1/movies', moviesRouter);
-//the below url will apply to all the url which do not match the proper route.
-//it should be always defiend at the last so that it doesn't execute first.
+
 app.all("*",(req, res, next)=>{
-    res.status(404).json({
-        status: 'fail',
-        message: `Can't find ${req.originalUrl} on the server`
-    });
-    next();
+    // res.status(404).json({
+    //     status: 'fail',
+    //     message: `Can't find ${req.originalUrl} on the server`
+    // });
+    const err = new Error(`Can't find ${req.originalUrl} on the server`);
+    err.status = 'fail';
+    err.statusCode = 404;
+    //if we pass anything in the next function it will consider it as a error.
+    next(err); 
 });
+
+//custom middleware to handle the error.
+app.use((error, req, res, next) =>{
+    error.statusCode = error.statusCode || 500;
+    error.status = error.status || 'error';
+    res.status(error.statusCode).json({
+        status: error.statusCode,
+        message: error.message
+    })
+    next();
+})
 
 module.exports = app;
 
