@@ -18,7 +18,12 @@ const movieSchema = new mongoose.Schema({
     },
     ratings: {
         type: Number,
-        default: 0.0
+        validate: {  //custom validation
+            validator: function(value){
+                return value >= 1 && value <= 10;
+            },
+            message: "Ratings should be above 1 and below 10."
+        }
     },
     totalRating: {
         type: Number
@@ -36,7 +41,11 @@ const movieSchema = new mongoose.Schema({
     },
     genres: {
         type: [String],
-        required: [true, 'Genres is required field']
+        required: [true, 'Genres is required field'],
+        enum:{ 
+            values: ["Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","Horror","Musical","Mystery","Romance","Sci-Fi","Thriller","War","Western"],
+            message: "This genre does not exist."
+        }
     },
     directors: {
         type : [String],
@@ -97,6 +106,8 @@ movieSchema.post(/^find/,function(docs,next){
     next();
 })
 
+
+//this is the aggregation middleware.
 movieSchema.pre('aggregate', function(next){
     this.pipeline().unshift({$match: {releaseDate: {$lte: new Date()}}});
     next();
