@@ -3,13 +3,13 @@ const fs = require('fs');
 const movieSchema = new mongoose.Schema({
     name: {
         type: String,
-        requried: [true,'Name is required field!'],
+        required: [true,'Name is required field!'],
         unique: true,
         trim: true
     },
     description: {
         type: String,
-        requried: [true,'Description is required field!'],
+        required: [true,'Description is required field!'],
         trim: true
     },
     duration: {
@@ -63,7 +63,10 @@ const movieSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Price is a requred field!']
     },
-    createdBy: String
+
+    createdBy:{
+        type: String
+    }
     
 },{
     toJSON:{virtuals: true},
@@ -84,6 +87,7 @@ movieSchema.post('save', function(doc, next){
     fs.writeFileSync('./Log/log.txt',content, {flag: 'a'}, (err)=>{
         console.log(err.message)
     })
+    
     next();
 })
 
@@ -112,6 +116,14 @@ movieSchema.pre('aggregate', function(next){
     this.pipeline().unshift({$match: {releaseDate: {$lte: new Date()}}});
     next();
 })
+
+movieSchema.pre('aggregate', function(next) {
+    const pipeline = this._pipeline || [];
+    pipeline.unshift({ $match: { releaseDate: { $lte: new Date() } } });
+    this._pipeline = pipeline;
+    next();
+});
+
 
 const Movie = mongoose.model('Movie',movieSchema);
 
