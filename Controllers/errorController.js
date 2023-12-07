@@ -33,6 +33,13 @@ const duplicateKeyErrorHandler = (err) =>{
     return new CustomError(msg, 400);
 }
     
+const validationErrorHandler = (err) =>{
+    const errors = Object.values(err.errors).map(val => val.message);
+    const errorMessages = errors.join('. ');
+    const msg = `Invalid error messages: ${errorMessages}`;
+    return new CustomError(msg, 400);
+}
+    
 
 
 module.exports = (error, req, res, next) =>{
@@ -43,16 +50,20 @@ module.exports = (error, req, res, next) =>{
     if(process.env.NODE_ENV === 'development'){
         devErrors(res, error);
     }else if(process.env.NODE_ENV === 'production'){
-        console.log(error)
+        
 
         if(error.name === 'CastError'){
-            
+            console.log("castError")
             error = castErrorHandler(error);
         }
         if(error.code === 11000){
             
             error = duplicateKeyErrorHandler(error);
         }
+        if(error.name === 'ValidationError'){
+            console.log("helllo")
+            error = validationErrorHandler(error)
+        };
         prodErrors(res, error);
     }
     //next();

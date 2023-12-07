@@ -10,13 +10,22 @@ mongoose.connect(process.env.CONN_STR)
 .then((conn)=>{    
     //console.log(conn);
     console.log('DB connection successfull');
-}).catch((error) =>{
-    console.log('error in connection.')
-})
+})//.catch((error) =>{
+//     console.log('error in connection.')
+// })
 
 const port = process.env.PORT || 3000;
 
-app.listen(port,() =>{
+const server = app.listen(port,() =>{
     console.log('Server has started...');
 })
 
+process.on('unhandledRejection',(err) =>{
+    console.log(err.name, err.message);
+    console.log('unhandled rejection occured Sutting down!');
+    server.close(() => {
+        process.exit(1);
+    })
+    
+
+})
