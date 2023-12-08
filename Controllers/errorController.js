@@ -40,7 +40,13 @@ const validationErrorHandler = (err) =>{
     return new CustomError(msg, 400);
 }
     
+const handledExpiredJWT = (err) =>{
+    return new CustomError('Jwt has expired, Please login in later',401);
+}
 
+const handledJWTError = (err) =>{
+    return new CustomError('Invalid token,Please login agian',401); //401 means unauthorized
+}
 
 module.exports = (error, req, res, next) =>{
     error.statusCode = error.statusCode || 500;
@@ -53,7 +59,7 @@ module.exports = (error, req, res, next) =>{
         
 
         if(error.name === 'CastError'){
-            console.log("castError")
+            
             error = castErrorHandler(error);
         }
         if(error.code === 11000){
@@ -61,8 +67,16 @@ module.exports = (error, req, res, next) =>{
             error = duplicateKeyErrorHandler(error);
         }
         if(error.name === 'ValidationError'){
-            console.log("helllo")
+            
             error = validationErrorHandler(error)
+        };
+        if(error.name === 'TokenExpiredError'){
+            
+            error = handledExpiredJWT(error);
+        };
+        if(error.name === 'JsonWebTokenError'){
+            
+            error = handledJWTError(error);
         };
         prodErrors(res, error);
     }
