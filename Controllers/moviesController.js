@@ -17,7 +17,7 @@ exports.getHighestRated = (req, res, next) =>{
 
 
 exports.getAllMovies = asyncErrorHandler(async (req,res,next) =>{
-
+    
         const features = new Apifeatures(Movie.find(), req.query)
                                     .filter()
                                     .sort()
