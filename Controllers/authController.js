@@ -99,3 +99,23 @@ exports.restrict = (role) => {
         next();
     }
 }
+
+exports.forgotPassword = asyncErrorHandler(async(req, res, next) =>{
+    const user = await User.findOne({email: req.body.email});
+
+    if(!user){
+        const error = new CustomError('We could not find the user with given email', 404);
+        next(error);
+    }
+
+    const resetToken = user.createResetPasswordToken();
+
+    await user.save({validateBeforeSave: false});
+
+    
+
+})
+
+exports.resetPassword = (req, res, next) =>{
+     
+}
