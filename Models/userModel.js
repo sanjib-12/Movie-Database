@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     },
     email:{
         type: String,
-        requried: [true, 'Please enter an email.'],
+        required: [true, 'Please enter an email.'],
         unique: true,
         lowercase: true,
         validate: [validator.isEmail, 'Please enter a valid email.']
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     },
     confirmPassword:{
         type: String,
-        requried:[true, 'Please confirm your password.'],
+        required:[true, 'Please confirm your password.'],
         validate: {
             validator: function(val){
                 return val == this.password;

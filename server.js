@@ -27,7 +27,7 @@ const server = app.listen(port,() =>{
     console.log('Server has started...');
 })
 
-//handling undefined promises
+//handeling undefined promises
 process.on('unhandledRejection',(err) =>{
     console.log(err.name, err.message);
     console.log('unhandled rejection occured! Sutting down!');

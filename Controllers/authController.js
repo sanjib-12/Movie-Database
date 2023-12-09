@@ -1,16 +1,17 @@
 const User = require('./../Models/userModel');
 const asyncErrorHandler = require('./../Utils/asyncErrorHandler');
-const jwt = require('jsonwebtoken')
-const CustomError = require('./../Utils/CustomError')
+const jwt = require('jsonwebtoken');
+const CustomError = require('./../Utils/CustomError');
 const util = require('util');
-const sendEmail = require('./../Utils/email')
+const sendEmail = require('./../Utils/email');
+const crypto = require('crypto');
 
 const signToken = id =>{
     return jwt.sign({id: id},process.env.SECRET_STR,{expiresIn: process.env.LOGIN_EXPIRES})
 }
 
 exports.signup = asyncErrorHandler(async (req, res, next) =>{
-    //console.log(process.env.LOGIN_EXPRIES)
+    //console.log(process.env.LOGIN_EXPIRIES)
    // console.log(process)
     const newUser = await User.create(req.body);
 
@@ -76,10 +77,10 @@ exports.protect = asyncErrorHandler(async(req, res, next) =>{
         next(error);
     }
 
-    //if the user changed pasword after the token was issued.
+    //if the user changed password after the token was issued.
     const isPasswordChanged = await user.isPasswordChanged(decodedToken.iat);
      if(isPasswordChanged){
-        const error = new CustomError('the password has been changed recently. Please login agian', 401);
+        const error = new CustomError('the password has been changed recently. Please login again', 401);
         return next(error);
      }
 
@@ -141,6 +142,30 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) =>{
    
 })
 
-exports.resetPassword = (req, res, next) =>{
-     
-}
+exports.resetPassword =asyncErrorHandler(async (req, res, next) =>{
+    //1. If the user Exists with the given token and token has not expired
+    const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = await User.findOne({passwordResetToken: token, passwordResetTokenExpires: {$gt: Date.now()}});
+    if(!user){
+        const error = new CustomError('Token is invalid or has expired', 400);
+        next(error);
+    }
+
+    //2.Resetting the user password
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    user.passwordChangedAt = Date.now();
+
+    user.save();
+
+    //3.Login the user
+    const loginToken = signToken(user._id);
+
+    res.status(200).json({
+        status: 'success',
+        token: loginToken
+    })
+
+})
