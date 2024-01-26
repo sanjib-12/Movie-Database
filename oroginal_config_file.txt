@@ -1,0 +1,6 @@
+CONN_STR = mongodb+srv://admin:lssQDyzPvOwZOx7h@cluster0.y1emf3i.mongodb.net/cineflix?retryWrites=true&w=majority
+DB_USER = admin
+DB_PASSWORD = lssQDyzPvOwZOx7h
+
+
+NOte: put the above code the config.env file to work properly.

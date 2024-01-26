@@ -118,12 +118,12 @@ exports.forgotPassword = asyncErrorHandler(async(req, res, next) =>{
 
     //Send the token back to the user email
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-    const message = `We Have received a password reset request. Please use the below link to reset your password \n\n${resetUrl}\n\nThis like will be vaild for 10 mins.`;
+    const message = `We Have received a password reset request. Please use the below link to reset your password \n\n${resetUrl}\n\nThis like will be validate for 10 mins.`;
     
     try{
         await sendEmail({
             email: user.email,
-            subject: 'password chage request received',
+            subject: 'password change request received',
             message: message
         });
     

@@ -27,7 +27,7 @@ exports.getAllMovies = asyncErrorHandler(async (req,res,next) =>{
         
         
         res.status(200).json({
-            stauts: 'success',
+            status: 'success',
             length: movies.length,
             data: {
                 movies: movies
@@ -75,7 +75,7 @@ exports.addMovies = asyncErrorHandler(async (req,res,next) =>{
         const movie = await Movie.create(req.body);
 
         res.status(200).json({
-            stauts: 'success',
+            status: 'success',
             data: {
                 movie: movie
             }
@@ -93,7 +93,7 @@ exports.updateMovies = asyncErrorHandler(async (req, res, next) => {
             return next(error);
         }
         res.status(200).json({
-            stauts: 'success',
+            status: 'success',
             data: {
                 movie: movie
             }
@@ -136,7 +136,7 @@ exports.getMovieStats = asyncErrorHandler(async (req, res, next) =>{
         ]);
 
         res.status(200).json({
-            stauts: 'success',
+            status: 'success',
             length: stats.length,
             data: {
                stats
