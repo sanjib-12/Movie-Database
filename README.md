@@ -1,4 +1,4 @@
-# Movie-Server
+# Movie-Database
 
 A server created to handle the functional of a movie application. It contains database for user and the movie. User can login or signup and perform a CURD operation with the movie database. 
 
